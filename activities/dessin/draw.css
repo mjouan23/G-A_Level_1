@@ -1,0 +1,45 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+#drawCanvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.draw-timeout {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.72);
+  color: #ff6f59;
+  font-family: "Arial Black", Arial, Helvetica, sans-serif;
+  font-size: clamp(4rem, 13vw, 12rem);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-shadow:
+    0 8px 0 #ffffff,
+    0 18px 42px rgba(31, 43, 70, 0.28);
+  text-transform: uppercase;
+}
+
+.draw-timeout.hidden {
+  display: none;
+}

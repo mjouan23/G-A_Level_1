@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>G&A LEVEL 1</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="team-scoreboard" aria-label="Scores des equipes">
+        <div class="team-card team-ninou">
+          <span class="team-name">Ninou</span>
+          <strong class="team-points">0</strong>
+          <div class="team-controls" aria-label="Points Ninou">
+            <button class="team-score-button" type="button" data-score-delta="-1">-</button>
+            <button class="team-score-button" type="button" data-score-delta="1">+</button>
+          </div>
+        </div>
+        <div class="team-card team-loulou">
+          <span class="team-name">Loulou</span>
+          <strong class="team-points">0</strong>
+          <div class="team-controls" aria-label="Points Loulou">
+            <button class="team-score-button" type="button" data-score-delta="-1">-</button>
+            <button class="team-score-button" type="button" data-score-delta="1">+</button>
+          </div>
+        </div>
+        <div class="team-card team-davy">
+          <span class="team-name">Davy</span>
+          <strong class="team-points">0</strong>
+          <div class="team-controls" aria-label="Points Davy">
+            <button class="team-score-button" type="button" data-score-delta="-1">-</button>
+            <button class="team-score-button" type="button" data-score-delta="1">+</button>
+          </div>
+        </div>
+        <div class="team-card team-croquette">
+          <span class="team-name">Croquette</span>
+          <strong class="team-points">0</strong>
+          <div class="team-controls" aria-label="Points Croquette">
+            <button class="team-score-button" type="button" data-score-delta="-1">-</button>
+            <button class="team-score-button" type="button" data-score-delta="1">+</button>
+          </div>
+        </div>
+        <div class="team-card team-ta-ta">
+          <span class="team-name">Ta-ta</span>
+          <strong class="team-points">0</strong>
+          <div class="team-controls" aria-label="Points Ta-ta">
+            <button class="team-score-button" type="button" data-score-delta="-1">-</button>
+            <button class="team-score-button" type="button" data-score-delta="1">+</button>
+          </div>
+        </div>
+        <div class="team-card team-a-ten">
+          <span class="team-name">A-ten !</span>
+          <strong class="team-points">0</strong>
+          <div class="team-controls" aria-label="Points A-ta !">
+            <button class="team-score-button" type="button" data-score-delta="-1">-</button>
+            <button class="team-score-button" type="button" data-score-delta="1">+</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="home-screen" id="homeScreen" aria-labelledby="pageTitle">
+        <div class="brand-panel">
+          <p class="eyebrow">Anniversaire d'Axel &amp; Gabriel</p>
+          <h1 id="pageTitle">G&amp;A LEVEL 1</h1>
+          <div class="score-strip" aria-label="Tableau d'ambiance">
+            <span>Axel</span>
+            <strong>&amp;</strong>
+            <span>Gabriel</span>
+          </div>
+        </div>
+
+        <nav class="activity-grid" aria-label="Activites">
+          <button class="activity-card active" type="button" data-activity="juste-ga">
+            <span class="activity-number">01</span>
+            <span class="activity-icon">?</span>
+            <span class="activity-title">Le Juste G&amp;A</span>
+            <span class="activity-subtitle">Estimez au plus pres</span>
+          </button>
+          <button class="activity-card" type="button" data-activity="chaussettes">
+            <span class="activity-number">02</span>
+            <span class="activity-icon">SOX</span>
+            <span class="activity-title">La chasse aux chaussettes</span>
+            <span class="activity-subtitle">Trouvez et reformez les paires</span>
+          </button>
+          <button class="activity-card" type="button" data-activity="baballes">
+            <span class="activity-number">03</span>
+            <span class="activity-icon">BAL</span>
+            <span class="activity-title">Panier de baballes</span>
+            <span class="activity-subtitle">Adresse, vitesse, precision</span>
+          </button>
+          <button class="activity-card" type="button" data-activity="memory">
+            <span class="activity-number">04</span>
+            <span class="activity-icon">PIC</span>
+            <span class="activity-title">Le Memory G&amp;A</span>
+            <span class="activity-subtitle">Retrouvez les paires de photos</span>
+          </button>
+          <button class="activity-card" type="button" data-activity="dessin">
+            <span class="activity-number">05</span>
+            <span class="activity-icon">ART</span>
+            <span class="activity-title">Dessine-moi un... les yeux bandes !</span>
+            <span class="activity-subtitle">Un dessin, un binome, le chrono</span>
+          </button>
+          <button class="activity-card" type="button" data-activity="comptines">
+            <span class="activity-number">06</span>
+            <span class="activity-icon">LA</span>
+            <span class="activity-title">N'oubliez pas les comptines !</span>
+            <span class="activity-subtitle">Retrouvez la suite exacte</span>
+          </button>
+        </nav>
+      </section>
+
+      <section class="module-screen hidden" id="moduleScreen" aria-live="polite">
+        <button class="back-button" type="button" id="backButton">&lt; Menu</button>
+        <article class="module-panel">
+          <div class="module-kicker" id="moduleNumber">Activite 01</div>
+          <h2 id="moduleTitle">Le Juste G&amp;A</h2>
+          <p id="moduleDescription"></p>
+          <div class="activity-module-mount" id="activityModuleMount"></div>
+        </article>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
