@@ -3,8 +3,8 @@ const fs = require("fs");
 const path = require("path");
 
 const root = __dirname;
-const port = 4173;
-const host = "127.0.0.1";
+// const port = 4173;
+const host = "level1.meeplix.fr";
 const types = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -37,5 +37,5 @@ http
     });
   })
   .listen(port, host, () => {
-    console.log(`G&A LEVEL 1: http://${host}:${port}/`);
+    console.log(`G&A LEVEL 1: https://${host}/`);
   });
