@@ -1,11 +1,14 @@
 export const activity = {
   id: "memory",
-  number: "Activite 04",
+  number: "Activité 04",
   icon: "PIC",
   title: "Le Memory G&A",
-  description: "Retournez deux cartes par tour, retrouvez les 15 paires de photos, et marquez un point par paire trouvee.",
+  description: "Les équipes devront retrouver un maximum de paires de photos d'Axel et Gabriel affichées à l'écran ; chaque paire correctement identifiée rapportera des points à l'équipe.",
+  points: "2 pts / paire",
   layout: "memory-fullscreen"
 };
+
+const POINTS_PER_PAIR = 2;
 
 const photos = Array.from({ length: 15 }, (_, index) => ({
   id: `memory-${index + 1}`,
@@ -45,31 +48,17 @@ export function render({
   let flippedCards = [];
   let foundPairs = 0;
   let locked = false;
-  let statusTimer = null;
 
   container.innerHTML = `
     <section class="memory-game" aria-label="Jeu de memory">
-      <p class="memory-status" data-memory-status aria-live="polite"></p>
       <div class="memory-grid"></div>
     </section>
   `;
 
   const grid = container.querySelector(".memory-grid");
-  const status = container.querySelector("[data-memory-status]");
 
   function getCurrentTeam() {
-    return teams[currentTeamIndex] || { index: currentTeamIndex, name: "Equipe" };
-  }
-
-  function setStatus(message, persistent = false) {
-    window.clearTimeout(statusTimer);
-    status.textContent = message;
-
-    if (!persistent) {
-      statusTimer = window.setTimeout(() => {
-        status.textContent = "";
-      }, 1800);
-    }
+    return teams[currentTeamIndex] || { index: currentTeamIndex, name: "Équipe" };
   }
 
   function updateTurnDisplay() {
@@ -86,7 +75,7 @@ export function render({
     grid.innerHTML = deck
       .map(
         (card) => `
-          <button class="memory-card" type="button" data-card-id="${card.cardId}" data-photo-id="${card.id}" aria-label="Carte cachee">
+          <button class="memory-card" type="button" data-card-id="${card.cardId}" data-photo-id="${card.id}" aria-label="Carte cachée">
             <span class="memory-card-inner">
               <span class="memory-card-face memory-card-back" aria-hidden="true">${activity.icon}</span>
               <span class="memory-card-face memory-card-front">
@@ -116,27 +105,25 @@ export function render({
     secondCard.disabled = true;
     foundPairs += 1;
 
-    incrementTeamScore(team.index);
+    for (let point = 0; point < POINTS_PER_PAIR; point += 1) {
+      incrementTeamScore(team.index);
+    }
 
     if (foundPairs === photos.length) {
-      setStatus(`Bravo ${team.name}, derniere paire trouvee !`, true);
       locked = false;
       return;
     }
-
-    setStatus(`Paire trouvee par ${team.name} !`);
     window.setTimeout(finishTurn, 850);
   }
 
   function handleMiss(firstCard, secondCard) {
     const team = getCurrentTeam();
-    setStatus(`${team.name} a rate, on recache les cartes.`);
 
     window.setTimeout(() => {
       firstCard.classList.remove("is-flipped");
       secondCard.classList.remove("is-flipped");
-      firstCard.setAttribute("aria-label", "Carte cachee");
-      secondCard.setAttribute("aria-label", "Carte cachee");
+      firstCard.setAttribute("aria-label", "Carte cachée");
+      secondCard.setAttribute("aria-label", "Carte cachée");
       finishTurn();
     }, 1100);
   }
@@ -147,7 +134,7 @@ export function render({
     }
 
     card.classList.add("is-flipped");
-    card.setAttribute("aria-label", "Carte devoilee");
+    card.setAttribute("aria-label", "Carte dévoilée");
     flippedCards.push(card);
 
     if (flippedCards.length < 2) return;
@@ -170,10 +157,14 @@ export function render({
 
   renderDeck();
   updateTurnDisplay();
-  setStatus("A vous de jouer.", true);
 
   return () => {
-    window.clearTimeout(statusTimer);
     setActiveTeam(null);
   };
 }
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+{
+    "songIndex": 2,
+    "round": 3,
+    "revealed": false,
+    "participants": [
+        {
+            "joinedAt": 1782476874
+        },
+        {
+            "joinedAt": 1782476884
+        },
+        {
+            "joinedAt": 1782476895
+        },
+        {
+            "joinedAt": 1782476902
+        },
+        {
+            "joinedAt": 1782476912
+        },
+        {
+            "joinedAt": 1782476919
+        }
+    ],
+    "submissions": {},
+    "introDone": false
+}

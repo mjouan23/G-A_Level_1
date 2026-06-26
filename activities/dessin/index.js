@@ -1,14 +1,17 @@
 const DRAW_CHANNEL_NAME = "ga-dessin-live";
 const DRAW_BOARD_URL = new URL("./draw.html", import.meta.url);
-const DRAW_DURATION_SECONDS = 60;
+const DRAW_DURATION_SECONDS = 120;
+const POINTS_PER_DRAWING = 5;
+const POINTS_PER_GUESS = 2;
 
 export const activity = {
   id: "dessin",
-  number: "Activite 05",
+  number: "Activité 05",
   icon: "ART",
-  title: "Dessine-moi un... les yeux bandes !",
-  description: "Un joueur dessine sur la tablette pendant que l'ecran principal affiche le dessin en direct.",
-  layout: "drawing-fullscreen"
+  title: "Dessine-moi un...",
+  description: "Un membre de l'équipe recevra secrètement le nom d'un objet à faire deviner. Sans jamais révéler ce mot à son coéquipier, il devra lui donner des instructions pour réaliser un dessin sur la tablette. Les autres équipes devront ensuite deviner de quoi il s'agit avant la fin du temps imparti. Si la bonne réponse est trouvée, l'équipe qui faisait deviner ainsi que l'équipe ayant donné la bonne réponse remporteront des points.",
+  layout: "drawing-fullscreen",
+  points: "5 pts / dessin à faire deviner - 2 pts / dessin deviné"
 };
 
 function resizeCanvas(canvas, context) {
@@ -42,7 +45,9 @@ export function render({
   container,
   teams = [],
   activeTeamIndex = 0,
-  setActiveTeam = () => {}
+  setActiveTeam = () => {},
+  incrementTeamScore = () => {},
+  adjustTeamScore = null
 }) {
   let channel = null;
   let drawWindow = null;
@@ -50,35 +55,106 @@ export function render({
   let resizeFrame = null;
   let remaining = DRAW_DURATION_SECONDS;
   let timer = null;
-  let drawingLocked = false;
+  let timerRunning = false;
+  let drawingLocked = true;
   let currentTeamIndex = activeTeamIndex;
+  let controlsCard = null;
+  let controls = null;
+  let countdownBadge = null;
+  let startButton = null;
 
   container.innerHTML = `
     <section class="drawing-host" aria-label="Visualisation du dessin">
-      <div class="drawing-actions">
-      <div class="drawing-countdown" aria-live="polite">${formatTime(remaining)}</div>
-      <button class="drawing-start-button" type="button">Lancer 1 min</button>
-      </div>
       <div class="drawing-timeout hidden" aria-live="assertive">Trop tard !</div>
-      <canvas class="drawing-preview" aria-label="Dessin en direct"></canvas>
-      <p class="drawing-status" aria-live="polite">Ouvre la fenetre tablette, deplace-la sur l'ecran secondaire, puis mets-la en plein ecran.</p>
+      <div class="drawing-stage">
+        <canvas class="drawing-preview" aria-label="Dessin en direct"></canvas>
+        <aside class="drawing-guess-panel" aria-label="Équipes qui devinent"></aside>
+      </div>
+      <p class="drawing-status" aria-live="polite">Ouvre la fenêtre tablette, déplace-la sur l'écran secondaire, puis mets-la en plein écran.</p>
     </section>
   `;
 
   const canvas = container.querySelector(".drawing-preview");
   const context = canvas.getContext("2d");
-  const startButton = container.querySelector(".drawing-start-button");
-  const countdown = container.querySelector(".drawing-countdown");
   const timeoutMessage = container.querySelector(".drawing-timeout");
   const status = container.querySelector(".drawing-status");
+  const guessPanel = container.querySelector(".drawing-guess-panel");
 
   function getCurrentTeam() {
-    return teams[currentTeamIndex] || { index: currentTeamIndex, name: "Equipe" };
+    return teams[currentTeamIndex] || { index: currentTeamIndex, name: "Équipe" };
+  }
+
+  function addTeamPoints(teamIndex, points) {
+    if (typeof adjustTeamScore === "function") {
+      adjustTeamScore(teamIndex, points);
+      return;
+    }
+
+    for (let point = 0; point < points; point += 1) {
+      incrementTeamScore(teamIndex);
+    }
+  }
+
+  function renderGuessButtons() {
+    const drawingTeam = getCurrentTeam();
+    guessPanel.innerHTML = "";
+
+    teams
+      .filter((team) => team.index !== drawingTeam.index)
+      .forEach((team) => {
+        const button = document.createElement("button");
+        button.className = "drawing-guess-button";
+        button.type = "button";
+        button.textContent = team.name;
+        button.dataset.teamIndex = String(team.index);
+        button.style.setProperty("--guess-team-color", team.color || "#4f7cff");
+        button.disabled = !timerRunning;
+        button.addEventListener("click", handleGuessButtonClick);
+        guessPanel.append(button);
+      });
+  }
+
+  function clearTeamControls() {
+    startButton?.removeEventListener("click", handleStartButtonClick);
+    controls?.remove();
+    controlsCard = null;
+    controls = null;
+    countdownBadge = null;
+    startButton = null;
+  }
+
+  function showTeamControls() {
+    const team = getCurrentTeam();
+    const teamCard = document.querySelectorAll(".team-card")[team.index];
+    if (!teamCard) return;
+
+    if (controlsCard !== teamCard) {
+      clearTeamControls();
+      controlsCard = teamCard;
+      controls = document.createElement("div");
+      controls.className = "team-turn-controls";
+      controls.innerHTML = `
+        <div class="team-turn-countdown" aria-live="polite">${formatTime(remaining)}</div>
+        <button class="team-turn-start-button" type="button">Go !</button>
+      `;
+      startButton = controls.querySelector(".team-turn-start-button");
+      countdownBadge = controls.querySelector(".team-turn-countdown");
+      startButton.addEventListener("click", handleStartButtonClick);
+      teamCard.append(controls);
+    }
+
+    countdownBadge.textContent = formatTime(remaining);
+    if (startButton) {
+      startButton.textContent = timerRunning ? "En cours" : "Go !";
+      startButton.disabled = timerRunning;
+    }
   }
 
   function updateActiveTeam() {
     const team = getCurrentTeam();
     setActiveTeam(team.index);
+    showTeamControls();
+    renderGuessButtons();
     return team;
   }
 
@@ -124,10 +200,10 @@ export function render({
     if (!message || typeof message !== "object") return;
 
     if (message.type === "draw-ready") {
-      status.textContent = "Tablette connectee. Le dessin apparaitra ici en direct.";
+      status.textContent = "Tablette connectée. Le dessin apparaîtra ici en direct.";
       resizeCanvas(canvas, context);
       clearPreview();
-      channel?.postMessage({ type: drawingLocked ? "draw-lock" : "draw-unlock" });
+      channel?.postMessage(drawingLocked ? { type: "draw-lock", showTimeout: !timeoutMessage.classList.contains("hidden") } : { type: "draw-unlock" });
       return;
     }
 
@@ -163,12 +239,12 @@ export function render({
     drawWindow = window.open(DRAW_BOARD_URL.href, "ga-dessin-tablette", "popup=yes,width=1200,height=800");
 
     if (!drawWindow) {
-      status.textContent = "La fenetre tablette a ete bloquee par le navigateur. Autorise les pop-ups puis reessaie.";
+      status.textContent = "La fenêtre tablette a été bloquée par le navigateur. Autorise les pop-ups puis réessaie.";
       return;
     }
 
     drawWindow.focus();
-    status.textContent = "Fenetre tablette ouverte. Deplace-la sur l'ecran secondaire puis passe-la en plein ecran.";
+    status.textContent = "Fenêtre tablette ouverte. Déplace-la sur l'écran secondaire puis passe-la en plein écran.";
   }
 
   function clearDrawing({ hideTimeout = true } = {}) {
@@ -179,11 +255,11 @@ export function render({
     channel?.postMessage({ type: "draw-clear" });
   }
 
-  function lockDrawing() {
+  function lockDrawing({ showTimeout = false } = {}) {
     drawingLocked = true;
     lastPoint = null;
-    timeoutMessage.classList.remove("hidden");
-    channel?.postMessage({ type: "draw-lock" });
+    timeoutMessage.classList.toggle("hidden", !showTimeout);
+    channel?.postMessage({ type: "draw-lock", showTimeout });
   }
 
   function unlockDrawing() {
@@ -195,45 +271,78 @@ export function render({
   function stopTimer() {
     window.clearInterval(timer);
     timer = null;
+    timerRunning = false;
   }
 
   function updateCountdown() {
-    countdown.textContent = formatTime(remaining);
+    showTeamControls();
+  }
+
+  function finishFoundRound(guessingTeamIndex) {
+    if (!timerRunning) return;
+
+    const drawingTeam = getCurrentTeam();
+    const guessingTeam = teams[guessingTeamIndex];
+    if (!guessingTeam || guessingTeam.index === drawingTeam.index) return;
+
+    stopTimer();
+    addTeamPoints(drawingTeam.index, POINTS_PER_DRAWING);
+    addTeamPoints(guessingTeam.index, POINTS_PER_GUESS);
+    clearDrawing();
+    lockDrawing();
+    remaining = DRAW_DURATION_SECONDS;
+    const nextTeamToPlay = nextTeam();
+    status.textContent = `${guessingTeam.name} a trouvé ! ${drawingTeam.name} +${POINTS_PER_DRAWING} pts, ${guessingTeam.name} +${POINTS_PER_GUESS} pts. Prochaine équipe : ${nextTeamToPlay.name}.`;
+    renderGuessButtons();
+  }
+
+  function finishTimeoutRound() {
+    stopTimer();
+    remaining = 0;
+    updateCountdown();
+    lockDrawing({ showTimeout: true });
+    clearDrawing({ hideTimeout: false });
+    remaining = DRAW_DURATION_SECONDS;
+    const nextTeamToPlay = nextTeam();
+    status.textContent = `Temps écoulé ! Prochaine équipe : ${nextTeamToPlay.name}.`;
+    renderGuessButtons();
   }
 
   function startCountdown() {
     stopTimer();
     const team = updateActiveTeam();
     remaining = DRAW_DURATION_SECONDS;
+    timerRunning = true;
     updateCountdown();
-    startButton.textContent = "C'est parti !";
-    startButton.disabled = true;
+    renderGuessButtons();
     unlockDrawing();
-    status.textContent = `Dessin en cours pour ${team.name} : 1 minute pour faire deviner.`;
+    status.textContent = `Dessin en cours pour ${team.name} : 2 minutes pour faire deviner.`;
 
     timer = window.setInterval(() => {
       remaining -= 1;
       updateCountdown();
 
       if (remaining <= 0) {
-        stopTimer();
-        remaining = 0;
-        updateCountdown();
-        lockDrawing();
-        clearDrawing({ hideTimeout: false });
-        const nextTeamToPlay = nextTeam();
-        startButton.textContent = "Lancer 1 min";
-        startButton.disabled = false;
-        status.textContent = `Temps ecoule ! Prochaine equipe : ${nextTeamToPlay.name}.`;
+        finishTimeoutRound();
       }
     }, 1000);
+  }
+
+  function handleStartButtonClick() {
+    if (timerRunning) return;
+
+    startCountdown();
+  }
+
+  function handleGuessButtonClick(event) {
+    const guessingTeamIndex = Number(event.currentTarget.dataset.teamIndex);
+    finishFoundRound(guessingTeamIndex);
   }
 
   scheduleResize();
   updateActiveTeam();
   channel = new BroadcastChannel(DRAW_CHANNEL_NAME);
   channel.addEventListener("message", handleMessage);
-  startButton.addEventListener("click", startCountdown);
   const handleResize = scheduleResize;
   window.addEventListener("resize", handleResize);
   window.setTimeout(openDrawingWindow, 0);
@@ -243,11 +352,12 @@ export function render({
     stopTimer();
     channel?.removeEventListener("message", handleMessage);
     channel?.close();
-    startButton.removeEventListener("click", startCountdown);
     window.removeEventListener("resize", handleResize);
+    clearTeamControls();
     setActiveTeam(null);
     if (drawWindow && !drawWindow.closed) {
       drawWindow.close();
     }
   };
 }
+

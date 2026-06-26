@@ -2,6 +2,7 @@ const DRAW_CHANNEL_NAME = "ga-dessin-live";
 
 const canvas = document.querySelector("#drawCanvas");
 const timeoutMessage = document.querySelector("#drawTimeout");
+const clearButton = document.querySelector("#drawClearButton");
 const context = canvas.getContext("2d");
 const channel = new BroadcastChannel(DRAW_CHANNEL_NAME);
 
@@ -65,6 +66,14 @@ function clearCanvas() {
   lastPoint = null;
 }
 
+function handleClearButtonClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  drawing = false;
+  clearCanvas();
+  channel.postMessage({ type: "draw-clear" });
+}
+
 function startDrawing(event) {
   if (locked) return;
 
@@ -104,7 +113,7 @@ channel.addEventListener("message", (event) => {
     locked = true;
     drawing = false;
     lastPoint = null;
-    timeoutMessage.classList.remove("hidden");
+    timeoutMessage.classList.toggle("hidden", !event.data.showTimeout);
     return;
   }
 
@@ -115,6 +124,7 @@ channel.addEventListener("message", (event) => {
 });
 
 window.addEventListener("resize", resizeCanvas);
+clearButton.addEventListener("click", handleClearButtonClick);
 canvas.addEventListener("pointerdown", startDrawing);
 canvas.addEventListener("pointermove", moveDrawing);
 canvas.addEventListener("pointerup", stopDrawing);
@@ -122,3 +132,4 @@ canvas.addEventListener("pointercancel", stopDrawing);
 
 resizeCanvas();
 channel.postMessage({ type: "draw-ready" });
+

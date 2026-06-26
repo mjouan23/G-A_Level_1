@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Moment Instant - vote</title>
+    <link rel="stylesheet" href="player.css" />
+  </head>
+  <body class="is-joining">
+    <main class="phone-shell">
+      <section class="phone-panel join-panel" aria-label="Connexion équipe">
+        <p class="phone-kicker">Moment Instant'</p>
+        <h1>Choisis ton équipe</h1>
+        <p class="phone-prompt" id="joinPrompt">Sélectionne ton équipe puis valide pour rejoindre le vote.</p>
+        <label class="team-select-label" for="teamSelect">Votre équipe</label>
+        <select id="teamSelect"></select>
+      </section>
+
+      <section class="phone-panel vote-panel" aria-label="Vote des photos">
+        <p class="phone-kicker" id="voteTitle">Vote des photos</p>
+        <h1 id="voteHeading">Choisis 2 photos</h1>
+        <p class="phone-prompt" id="votePrompt">Choisissez 2 photos, sans voter pour celles de votre équipe.</p>
+        <form id="voteForm" class="vote-form"></form>
+      </section>
+
+      <footer class="phone-footer">
+        <button class="submit-button" type="button" id="submitButton">Voter !</button>
+        <p class="phone-status" id="phoneStatus" aria-live="polite"></p>
+      </footer>
+    </main>
+    <script type="module" src="player.js"></script>
+  </body>
+</html>
+

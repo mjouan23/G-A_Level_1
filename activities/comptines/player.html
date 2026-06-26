@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comptines - téléphone</title>
+    <link rel="stylesheet" href="player.css" />
+  </head>
+  <body>
+    <main class="phone-shell">
+      <h1>N'oubliez pas les comptines !</h1>
+      <section class="phone-panel">
+        <label for="teamSelect">Votre équipe</label>
+        <select id="teamSelect"></select>
+      </section>
+      <section class="phone-panel">
+        <p class="phone-kicker" id="songTitle"></p>
+        <p class="phone-prompt" id="songPrompt"></p>
+        <form id="answerForm" class="answer-form"></form>
+        <button class="submit-button" type="button" id="submitButton">Valider</button>
+        <p class="phone-status" id="phoneStatus" aria-live="polite"></p>
+      </section>
+    </main>
+    <script type="module" src="player.js"></script>
+  </body>
+</html>
