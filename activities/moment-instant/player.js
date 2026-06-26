@@ -1,4 +1,4 @@
-const apiUrl = "http://192.168.1.37/G&A_Level_1/activities/moment-instant/api.php";
+const apiUrl = "https://level1.meeplix.fr/activities/moment-instant/api.php";
 const teams = [
   { index: 0, name: "Ninou", photos: [1, 2] },
   { index: 1, name: "Loulou", photos: [3, 4] },
