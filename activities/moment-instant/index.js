@@ -8,8 +8,8 @@ export const activity = {
 };
 
 const pointsPerVote = 2;
-const apiUrl = "http://level1.meeplix.fr/activities/moment-instant/api.php";
-const playerUrl = "http://level1.meeplix.fr/activities/moment-instant/player.html";
+const apiUrl = "https://level1.meeplix.fr/activities/moment-instant/api.php";
+const playerUrl = "https://level1.meeplix.fr/activities/moment-instant/player.html";
 const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=16&data=${encodeURIComponent(playerUrl)}`;
 const requestTimeout = 10000;
 const appliedVotesStorageKey = "momentInstantAppliedVotes";
