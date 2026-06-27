@@ -1,5 +1,5 @@
-const apiUrl = ENV.getApiUrl("/activities/moment-instant/api.php");
-const requestTimeout = ENV.requestTimeout;
+const apiUrl = "http://level1.meeplix.fr/activities/moment-instant/api.php";
+const requestTimeout = 10000;
 const teams = [
   { index: 0, name: "Ninou", photos: [1, 2] },
   { index: 1, name: "Loulou", photos: [3, 4] },
