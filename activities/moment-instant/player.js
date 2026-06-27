@@ -1,4 +1,7 @@
-const apiUrl = "https://level1.meeplix.fr/activities/moment-instant/api.php";
+import { ENV } from "../../env.js";
+
+const apiUrl = ENV.getApiUrl("/activities/moment-instant/api.php");
+const requestTimeout = ENV.requestTimeout;
 const teams = [
   { index: 0, name: "Ninou", photos: [1, 2] },
   { index: 1, name: "Loulou", photos: [3, 4] },
@@ -176,7 +179,7 @@ function renderNoTeamSelected(state) {
   joinPrompt.textContent = `En attente des équipes : ${state.participantCount || 0}/${state.teamCount || teams.length}`;
   voteForm.innerHTML = "";
   selectedPhotoNumbers = [];
-  submitButton.textContent = "Voter !";
+  submitButton.textContent = "Rejoindre";
   submitButton.disabled = true;
   phoneStatus.textContent = "Choisissez votre équipe pour rejoindre le vote.";
 }
@@ -186,9 +189,9 @@ function renderTeamSelectedNotJoined(state) {
   joinPrompt.textContent = `En attente des équipes : ${state.participantCount || 0}/${state.teamCount || teams.length}`;
   voteForm.innerHTML = "";
   selectedPhotoNumbers = [];
-  submitButton.textContent = "Voter !";
+  submitButton.textContent = "Rejoindre";
   submitButton.disabled = false;
-  phoneStatus.textContent = "Cliquez sur Voter ! pour connectér votre équipe.";
+  phoneStatus.textContent = "Cliquez sur Rejoindre pour connectér votre équipe.";
 }
 
 function renderWaiting(state) {
@@ -196,10 +199,10 @@ function renderWaiting(state) {
   joinPrompt.textContent = `Connecté. En attente des équipes : ${state.participantCount || 0}/${state.teamCount || teams.length}`;
   voteForm.innerHTML = "";
   selectedPhotoNumbers = [];
-  submitButton.textContent = "Voter !";
+  submitButton.textContent = "Rejoindre";
   submitButton.disabled = true;
   phoneStatus.textContent = "Le vote commence quand les 6 équipes sont prêtes.";
-}
+
 
 function renderState(state) {
   const teamIndex = selectedTeamIndex();

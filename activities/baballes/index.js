@@ -3,7 +3,7 @@ export const activity = {
   number: "Activité 03",
   icon: "BAL",
   title: "Panier de baballes",
-  description: "Chaque joueur tente de marquer un maximum de paniers avec des petites balles dans un temps limité.",
+  description: "Chaque joueur doit mettre un maximum de paniers dans le temps imparti. Une autre équipe sera chargée de compter le nombre de paniers réalisés.",
   points: "1 pt / panier"
 };
 
@@ -41,6 +41,11 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
   let timer = null;
   let timerRunning = false;
   let countersVisible = false;
+  const countdownMusic = new Audio(new URL("./sons/Yakety Sax.mp3", import.meta.url));
+  const endGong = new Audio(new URL("./sons/gong.mp3", import.meta.url));
+  countdownMusic.loop = true;
+  countdownMusic.preload = "auto";
+  endGong.preload = "auto";
 
   container.innerHTML = `
     <section class="baballes-module" aria-label="Compteurs Panier de baballes">
@@ -63,7 +68,10 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
         </div>
 
         <div class="baballes-team-grid" data-team-grid hidden></div>
-        <button class="baballes-next-round-button" type="button" data-next-round hidden>Lancer les 3 autres équipes</button>
+        <div class="baballes-round-actions" data-round-actions hidden>
+          <button class="baballes-restart-round-button" type="button" data-restart-round hidden>Relancer cette manche</button>
+          <button class="baballes-next-round-button" type="button" data-next-round hidden>Lancer les 3 autres équipes</button>
+        </div>
       </div>
     </section>
   `;
@@ -73,6 +81,8 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
   const countdownDisplay = container.querySelector("[data-countdown-display]");
   const startButton = container.querySelector("[data-start-button]");
   const teamGrid = container.querySelector("[data-team-grid]");
+  const roundActions = container.querySelector("[data-round-actions]");
+  const restartRoundButton = container.querySelector("[data-restart-round]");
   const nextRoundButton = container.querySelector("[data-next-round]");
 
   function getCurrentRoundTeams() {
@@ -83,6 +93,26 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
     window.clearInterval(timer);
     timer = null;
     timerRunning = false;
+  }
+
+  function stopCountdownMusic() {
+    countdownMusic.pause();
+    countdownMusic.currentTime = 0;
+  }
+
+  function stopEndGong() {
+    endGong.pause();
+    endGong.currentTime = 0;
+  }
+
+  function playCountdownMusic() {
+    stopCountdownMusic();
+    countdownMusic.play().catch(() => {});
+  }
+
+  function playEndGong() {
+    stopEndGong();
+    endGong.play().catch(() => {});
   }
 
   function updateGlobalScore(teamIndex, delta) {
@@ -127,6 +157,8 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
 
   function renderRound() {
     stopTimer();
+    stopCountdownMusic();
+    stopEndGong();
     remaining = roundDurationSeconds;
     countersVisible = false;
     countdownDisplay.textContent = formatTime(remaining);
@@ -134,6 +166,8 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
     startButton.textContent = "Lancer la manche";
     countdownPanel.hidden = false;
     teamGrid.hidden = true;
+    roundActions.hidden = true;
+    restartRoundButton.hidden = true;
     nextRoundButton.hidden = true;
     renderRoundTeams();
     renderCounters();
@@ -143,6 +177,8 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
     countersVisible = true;
     countdownPanel.hidden = true;
     teamGrid.hidden = false;
+    roundActions.hidden = false;
+    restartRoundButton.hidden = false;
     renderCounters();
 
     const hasNextRound = currentRoundIndex < rounds.length - 1 && rounds[currentRoundIndex + 1].length > 0;
@@ -153,15 +189,19 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
     if (timerRunning) return;
 
     stopTimer();
+    stopEndGong();
     remaining = roundDurationSeconds;
     timerRunning = true;
     countersVisible = false;
     teamGrid.hidden = true;
+    roundActions.hidden = true;
+    restartRoundButton.hidden = true;
     nextRoundButton.hidden = true;
     countdownPanel.hidden = false;
     countdownDisplay.textContent = formatTime(remaining);
     startButton.textContent = "C'est parti !";
     startButton.disabled = true;
+    playCountdownMusic();
 
     timer = window.setInterval(() => {
       remaining -= 1;
@@ -169,9 +209,17 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
 
       if (remaining <= 0) {
         stopTimer();
+        stopCountdownMusic();
+        playEndGong();
         showCounters();
       }
     }, 1000);
+  }
+
+  function restartCurrentRound() {
+    if (timerRunning || !countersVisible) return;
+
+    startCountdown();
   }
 
   function goToNextRound() {
@@ -196,6 +244,7 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
   }
 
   startButton.addEventListener("click", startCountdown);
+  restartRoundButton.addEventListener("click", restartCurrentRound);
   nextRoundButton.addEventListener("click", goToNextRound);
   teamGrid.addEventListener("click", handleCounterClick);
 
@@ -203,7 +252,10 @@ export function render({ container, teams = [], incrementTeamScore = () => {}, a
 
   return () => {
     stopTimer();
+    stopCountdownMusic();
+    stopEndGong();
     startButton.removeEventListener("click", startCountdown);
+    restartRoundButton.removeEventListener("click", restartCurrentRound);
     nextRoundButton.removeEventListener("click", goToNextRound);
     teamGrid.removeEventListener("click", handleCounterClick);
   };

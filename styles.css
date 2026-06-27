@@ -756,10 +756,11 @@ h2 {
   grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(18px, 2.4vw, 32px);
   min-height: 0;
+  z-index: 2;
   padding: clamp(22px, 3vw, 42px);
   border: 5px solid rgba(255, 255, 255, 0.94);
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 1);
   box-shadow: 0 18px 0 rgba(27, 67, 117, 0.16);
 }
 
@@ -1766,6 +1767,7 @@ h2 {
 }
 
 .baballes-start-button,
+.baballes-restart-round-button,
 .baballes-next-round-button {
   border: 5px solid rgba(255, 255, 255, 0.96);
   border-radius: 999px;
@@ -1782,11 +1784,27 @@ h2 {
   padding: 14px 26px;
 }
 
+.baballes-round-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.baballes-restart-round-button,
 .baballes-next-round-button {
   justify-self: center;
   padding: 12px 22px;
+}
+
+.baballes-next-round-button {
   background: var(--yellow);
   color: #704700;
+}
+
+.baballes-restart-round-button {
+  background: var(--blue);
+  color: #ffffff;
 }
 
 .baballes-start-button:disabled {
@@ -1796,6 +1814,8 @@ h2 {
 
 .baballes-countdown[hidden],
 .baballes-team-grid[hidden],
+.baballes-round-actions[hidden],
+.baballes-restart-round-button[hidden],
 .baballes-next-round-button[hidden] {
   display: none;
 }
@@ -1955,17 +1975,19 @@ h2,
 
 
 .moment-instant-module {
+  position: relative;
   grid-template-columns: minmax(260px, 0.85fr) minmax(360px, 1fr);
   height: 100%;
 }
 
 .moment-visual-panel {
+  position: absolute;
+  inset: 0;
   display: grid;
   gap: clamp(10px, 1.6vh, 16px);
   align-content: center;
   justify-items: center;
-  min-width: 0;
-  min-height: 0;
+  z-index: 1;
 }
 
 .moment-photo-map {

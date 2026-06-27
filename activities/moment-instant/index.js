@@ -8,8 +8,8 @@ export const activity = {
 };
 
 const pointsPerVote = 2;
-const apiUrl = "http://192.168.1.37/G&A_Level_1/activities/moment-instant/api.php";
-const playerUrl = "http://192.168.1.37/G&A_Level_1/activities/moment-instant/player.html";
+const apiUrl = "http://level1.meeplix.fr/activities/moment-instant/api.php";
+const playerUrl = "http://level1.meeplix.fr/activities/moment-instant/player.html";
 const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=16&data=${encodeURIComponent(playerUrl)}`;
 const requestTimeout = 10000;
 const appliedVotesStorageKey = "momentInstantAppliedVotes";
@@ -117,7 +117,7 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
         <img src="${qrCodeUrl}" alt="QR code pour revenir au vote Moment Instant" />
         <span>${playerUrl}</span>
       </div>
-      <div class="moment-visual-panel">
+      <div class="moment-visual-panel" data-visual-panel>
         <img src="activities/moment-instant/images/photo_instant.png" alt="Moment Instant" class="activity-image moment-instant-image">
         <div class="moment-photo-map" aria-label="Numéros des photos par équipe">
           ${photoOwners.map((owner) => `
@@ -128,18 +128,18 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
         </div>
       </div>
 
-      <div class="moment-connectéd-panel" data-waiting>
-        <div class="moment-connectéd-copy">
+      <div class="comptines-waiting" data-waiting>
+        <div class="comptines-waiting-copy">
           <div class="comptines-kicker">Connexion des équipes</div>
           <h3>Scannez le QR code</h3>
           <p>Chaque équipe choisit son nom sur son téléphone. Le vote s'ouvre automatiquement quand les 6 équipes sont connectées.</p>
           <div class="comptines-phone-url">${playerUrl}</div>
-          <strong class="comptines-connectéd-count" data-connectéd-count>0/6 connectées</strong>
+          <strong class="comptines-connected-count" data-connected-count>0/6 connectées</strong>
         </div>
         <div class="comptines-qr-card">
           <img src="${qrCodeUrl}" alt="QR code pour voter au Moment Instant" />
         </div>
-        <div class="comptines-connectéd-teams" data-connectéd-teams></div>
+        <div class="comptines-connected-teams" data-connected-teams></div>
       </div>
 
       <div class="moment-vote-panel" data-vote-panel hidden>
@@ -155,10 +155,11 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
 
   const qrToggleButton = container.querySelector("[data-rejoin-qr-toggle]");
   const qrPopover = container.querySelector("[data-rejoin-qr-popover]");
+  const visualPanel = container.querySelector("[data-visual-panel]");
   const waitingPanel = container.querySelector("[data-waiting]");
   const votePanel = container.querySelector("[data-vote-panel]");
-  const connectédCount = container.querySelector("[data-connectéd-count]");
-  const connectédTeams = container.querySelector("[data-connectéd-teams]");
+  const connectedCount = container.querySelector("[data-connected-count]");
+  const connectedTeams = container.querySelector("[data-connected-teams]");
   const teamVotes = container.querySelector("[data-team-votes]");
   const photoResults = container.querySelector("[data-photo-results]");
 
@@ -173,12 +174,12 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
     const participantCount = state?.participantCount || 0;
     const teamCount = state?.teamCount || teams.length;
 
-    connectédCount.textContent = `${participantCount}/${teamCount} connectées`;
-    connectédTeams.innerHTML = teams
+    connectedCount.textContent = `${participantCount}/${teamCount} connectées`;
+    connectedTeams.innerHTML = teams
       .map((team) => {
-        const connectéd = Boolean(participants[String(team.index)]);
+        const connected = Boolean(participants[String(team.index)]);
         return `
-          <span class="comptines-connectéd-team ${connectéd ? "is-connectéd" : ""}" style="--team-color: ${team.color}">
+          <span class="comptines-connected-team ${connected ? "is-connected" : ""}" style="--team-color: ${team.color}">
             ${team.name}
           </span>
         `;
@@ -233,6 +234,7 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
 
   function renderState(state) {
     const isReady = Boolean(state.ready);
+    visualPanel.hidden = !isReady;
     waitingPanel.hidden = isReady;
     votePanel.hidden = !isReady;
 

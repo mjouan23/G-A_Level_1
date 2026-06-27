@@ -8,7 +8,7 @@ export const activity = {
   number: "Activité 02",
   icon: "SOX",
   title: "La chasse aux chaussettes",
-  description: "Pendant le temps du compte à rebours, chaque équipe devra retrouver et associer les chaussettes d'Axel et Gabriel afin de reconstituer un maximum de paires. À la fin du temps imparti, les paires correctement reconstituées seront comptabilisées. Chaque paire retrouvée rapportera 5 points à l'équipe.",
+  description: "Pendant le temps du compte à rebours, chaque équipe devra retrouver et associer les chaussettes d'Axel et Gabriel afin de reconstituer un maximum de paires. À la fin du temps imparti, seules les paires correctement reconstituées seront comptabilisées.",
   layout: "sock-timer",
   points: "3 pts / paire"
 };
