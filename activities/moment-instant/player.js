@@ -10,7 +10,6 @@ const teams = [
   { index: 4, name: "Ta-ta", photos: [9, 10] },
   { index: 5, name: "A-ten !", photos: [11, 12] }
 ];
-const requestTimeout = 6000;
 
 const teamSelect = document.querySelector("#teamSelect");
 const joinPrompt = document.querySelector("#joinPrompt");
