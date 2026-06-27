@@ -201,7 +201,7 @@ function renderWaiting(state) {
   submitButton.textContent = "Rejoindre";
   submitButton.disabled = true;
   phoneStatus.textContent = "Le vote commence quand les 6 équipes sont prêtes.";
-
+}
 
 function renderState(state) {
   const teamIndex = selectedTeamIndex();
