@@ -1,5 +1,3 @@
-import { ENV } from "../../env.js";
-
 const apiUrl = ENV.getApiUrl("/activities/moment-instant/api.php");
 const requestTimeout = ENV.requestTimeout;
 const teams = [
