@@ -528,7 +528,7 @@ h2 {
   position: relative;
   z-index: 1;
   grid-column: 2;
-  align-self: end;
+  align-self: center;
   color: #1f2b46;
   font-size: clamp(1.5rem, 2vw, 2.45rem);
   font-weight: 900;
@@ -540,6 +540,7 @@ h2 {
   position: relative;
   z-index: 1;
   grid-column: 2;
+  align-self: center;
   color: var(--muted);
   font-size: clamp(1rem, 1.18vw, 1.3rem);
   font-weight: 800;
