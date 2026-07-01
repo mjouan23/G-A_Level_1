@@ -95,6 +95,15 @@ function handleAnswerInput(event) {
   input.value = input.value.replace(/\s+/g, "");
   focusNextInput(input);
 }
+
+function handleAnswerKeydown(event) {
+  const input = event.target.closest("input");
+  if (!input || event.key !== "Enter") return;
+
+  event.preventDefault();
+  focusNextInput(input);
+}
+
 async function fetchWithTimeout(url, options = {}) {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), requestTimeout);
@@ -273,6 +282,7 @@ teamSelect.addEventListener("change", () => {
   refresh();
 });
 answerForm.addEventListener("input", handleAnswerInput);
+answerForm.addEventListener("keydown", handleAnswerKeydown);
 submitButton.addEventListener("click", submitAnswer);
 refresh();
 window.setInterval(refresh, 2500);
