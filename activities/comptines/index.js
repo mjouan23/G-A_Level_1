@@ -187,6 +187,19 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
   const teamResults = container.querySelector("[data-team-results]");
   const resetGameButton = container.querySelector(".comptines-reset-game-button");
 
+  function initializeStableView() {
+    waitingPanel.hidden = false;
+    listeningPanel.hidden = true;
+    gamePanel.hidden = true;
+    teamResults.hidden = true;
+    connectedCount.textContent = "0/6 connectées";
+    connectedTeams.innerHTML = "";
+    songTitle.textContent = "";
+    songPrompt.textContent = "";
+    answerContainer.innerHTML = "";
+    revealButton.disabled = true;
+  }
+
   function toggleQrPopover() {
     const hidden = !qrPopover.hidden;
     qrPopover.hidden = hidden;
@@ -407,6 +420,8 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
     stopIntroAudio();
     renderState(await postState({ action: "reset", songIndex }));
   }
+
+  initializeStableView();
 
   qrToggleButton.addEventListener("click", toggleQrPopover);
   listeningPlayButton.addEventListener("click", () => {
