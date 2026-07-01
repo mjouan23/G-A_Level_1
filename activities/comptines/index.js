@@ -159,6 +159,7 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
         <p class="comptines-prompt" data-song-prompt></p>
         <div class="comptines-answer-line" data-answer-line></div>
         <div class="comptines-actions">
+          <button class="comptines-replay-button" type="button" data-replay-audio>Relancer la comptine</button>
           <button class="comptines-reveal-button" type="button">Montre la réponse</button>
           <!-- <button class="comptines-prev-button" type="button">Comptine precedente</button>-->
           <button class="comptines-next-button" type="button">Comptine suivante</button>
@@ -181,6 +182,7 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
   const songTitle = container.querySelector("[data-song-title]");
   const songPrompt = container.querySelector("[data-song-prompt]");
   const answerContainer = container.querySelector("[data-answer-line]");
+  const replayButton = container.querySelector("[data-replay-audio]");
   const revealButton = container.querySelector(".comptines-reveal-button");
   // const prevButton = container.querySelector(".comptines-prev-button");
   const nextButton = container.querySelector(".comptines-next-button");
@@ -218,6 +220,11 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
     audioElement.load();
     audioElement = null;
     audioPlayInProgress = false;
+  }
+
+  function replayAudio() {
+    if (!state?.currentSong) return;
+    playIntroAudio(state.currentSong);
   }
 
   async function unlockPromptForCurrentRound() {
@@ -442,6 +449,7 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
     if (!state?.currentSong || audioPlayInProgress) return;
     playIntroAudio(state.currentSong);
   });
+  replayButton.addEventListener("click", replayAudio);
   // resetGameButton.addEventListener("click", restartGame);
   revealButton.addEventListener("click", revealAnswer);
   // prevButton.addEventListener("click", () => {
@@ -458,6 +466,7 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
     window.clearInterval(pollTimer);
     stopIntroAudio();
     qrToggleButton.removeEventListener("click", toggleQrPopover);
+    replayButton.removeEventListener("click", replayAudio);
     // resetGameButton.removeEventListener("click", restartGame);
     revealButton.removeEventListener("click", revealAnswer);
     nextButton.removeEventListener("click", goToNextSong);

@@ -919,6 +919,7 @@ h2 {
 }
 
 
+.comptines-replay-button,
 .comptines-reveal-button,
 /* .comptines-prev-button, */
 .comptines-next-button {
@@ -926,6 +927,11 @@ h2 {
   border-radius: 999px;
   font-weight: 900;
   cursor: pointer;
+}
+
+.comptines-replay-button {
+  background: var(--yellow);
+  color: #704700;
 }
 
 
