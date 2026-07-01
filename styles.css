@@ -986,13 +986,25 @@ h2 {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-end;
+  align-items: center;
 }
 
+.comptines-replay-button,
 .comptines-reveal-button,
 /* .comptines-prev-button, */
 .comptines-next-button {
   padding: 12px 18px;
+  min-height: 48px;
   font-size: clamp(1rem, 1.2vw, 1.25rem);
+  box-shadow: 0 8px 0 rgba(31, 43, 70, 0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.comptines-replay-button:hover,
+.comptines-reveal-button:hover,
+.comptines-next-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 0 rgba(31, 43, 70, 0.16);
 }
 
 .comptines-reveal-button {
@@ -1003,6 +1015,11 @@ h2 {
 /* .comptines-prev-button, */
 .comptines-next-button {
   background: var(--yellow);
+  color: #704700;
+}
+
+.comptines-replay-button {
+  background: linear-gradient(135deg, #ffd96b 0%, var(--yellow) 100%);
   color: #704700;
 }
 
