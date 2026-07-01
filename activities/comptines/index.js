@@ -276,6 +276,20 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
       playIntroAudio(song);
     }
   }
+
+  function renderGuessing(song) {
+    waitingPanel.hidden = true;
+    listeningPanel.hidden = true;
+    gamePanel.hidden = false;
+    teamResults.hidden = false;
+
+    songTitle.textContent = song.title;
+    songPrompt.textContent = song.prompt;
+    answerContainer.innerHTML = answerLine(song, state.revealed);
+    revealButton.disabled = state.revealed;
+    renderTeams();
+  }
+
   function renderWaiting() {
     const participants = state?.participants || {};
     const participantCount = state?.participantCount || 0;
@@ -327,21 +341,21 @@ export function render({ container, teams = [], incrementTeamScore = () => {} })
     state = nextState;
     const isReady = Boolean(state.ready);
 
-    waitingPanel.hidden = isReady;
-    gamePanel.hidden = !isReady;
-    teamResults.hidden = !isReady;
-
     if (!isReady) {
+      waitingPanel.hidden = false;
+      listeningPanel.hidden = true;
+      gamePanel.hidden = true;
+      teamResults.hidden = true;
       renderWaiting();
       return;
     }
 
-    const song = state.currentSong;
-    songTitle.textContent = song.title;
-    songPrompt.textContent = song.prompt;
-    answerContainer.innerHTML = answerLine(song, state.revealed);
-    revealButton.disabled = state.revealed;
-    renderTeams();
+    if (!state.introDone) {
+      renderListening(state.currentSong);
+      return;
+    }
+
+    renderGuessing(state.currentSong);
   }
 
   function scoreRound(nextState, { requireRevealed = false } = {}) {
