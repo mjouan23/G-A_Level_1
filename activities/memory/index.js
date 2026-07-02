@@ -9,6 +9,7 @@ export const activity = {
 };
 
 const POINTS_PER_PAIR = 2;
+const MEMORY_MUSIC_URL = new URL("./sons/Kevin MacLeod Wallpaper.mp3", import.meta.url);
 
 const photos = Array.from({ length: 15 }, (_, index) => ({
   id: `memory-${index + 1}`,
@@ -154,6 +155,11 @@ export function render({
     if (!card) return;
     handleCardClick(card);
   });
+
+  const memoryMusic = new Audio(MEMORY_MUSIC_URL);
+  memoryMusic.loop = true;
+  memoryMusic.volume = 0.5;
+  memoryMusic.play().catch(() => {});
 
   renderDeck();
   updateTurnDisplay();
