@@ -217,9 +217,14 @@
           const end = parts[2];
           const text = parts.slice(9).join(",");
 
+          const cueStart = timeToSeconds(start);
+          const cueEnd = timeToSeconds(end);
+
+          if (!Number.isFinite(cueStart) || !Number.isFinite(cueEnd) || cueEnd <= cueStart) return;
+
           parsed.push({
-            start: timeToSeconds(start),
-            end: timeToSeconds(end),
+            start: cueStart,
+            end: cueEnd,
             text: sanitizeText(text)
           });
         });
@@ -234,14 +239,8 @@
 
         if (!cues.length) return;
 
-        let activeCueIndex = 0;
-        for (let index = cues.length - 1; index >= 0; index -= 1) {
-          const cue = cues[index];
-          if (currentTime >= cue.start && currentTime < cue.end) {
-            activeCueIndex = index;
-            break;
-          }
-        }
+        const activeCue = cues.findLast((cue) => currentTime >= cue.start && currentTime < cue.end);
+        const activeCueIndex = cues.indexOf(activeCue);
 
         if (activeCueIndex !== currentCueIndex) {
           currentCueIndex = activeCueIndex;
