@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Karaoké - Nos deux petits soleils</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07111f;
+        --panel: rgba(8, 19, 38, 0.78);
+        --text: #f7faff;
+        --accent: #62dca6;
+        --accent-2: #4eb3ff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 10% 20%, rgba(78, 179, 255, 0.28), transparent 24%),
+          radial-gradient(circle at 90% 15%, rgba(98, 220, 166, 0.24), transparent 26%),
+          linear-gradient(135deg, var(--bg) 0%, #0d1f33 100%);
+        overflow: hidden;
+      }
+
+      .karaoke-screen {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 100vh;
+        padding: clamp(18px, 3vw, 36px);
+        gap: 18px;
+      }
+
+      .karaoke-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .karaoke-title {
+        margin: 0;
+        font-size: clamp(1.35rem, 2.1vw, 2.05rem);
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .karaoke-title span {
+        display: block;
+        color: #b8dfff;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .karaoke-play {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        color: #06223a;
+        font-weight: 900;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+      }
+
+      .karaoke-lyrics {
+        display: grid;
+        place-items: center;
+        padding: clamp(16px, 3vw, 36px);
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        border-radius: 28px;
+        background: var(--panel);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(14px);
+      }
+
+      .lyric-card {
+        width: min(100%, 1100px);
+        text-align: center;
+      }
+
+      .lyric-line {
+        min-height: 180px;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        font-size: clamp(2rem, 4.8vw, 4.6rem);
+        font-weight: 900;
+        line-height: 1.2;
+        letter-spacing: 0.01em;
+        text-shadow: 0 6px 28px rgba(0, 0, 0, 0.25);
+      }
+
+      .lyric-line.is-current {
+        color: #ffffff;
+      }
+
+      .lyric-line.is-next {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+        opacity: 0.9;
+      }
+
+      .karaoke-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .karaoke-progress {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      .karaoke-progress > span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+        transition: width 80ms linear;
+      }
+
+      audio {
+        width: 100%;
+      }
+
+      .karaoke-status {
+        margin: 0;
+        color: #cfe8ff;
+        font-size: 0.95rem;
+        opacity: 0.9;
+      }
+
+      @media (max-width: 800px) {
+        .karaoke-screen { padding: 16px; }
+        .karaoke-header { flex-direction: column; align-items: stretch; }
+        .karaoke-play { width: 100%; }
+        .lyric-line { min-height: 140px; font-size: clamp(1.5rem, 6vw, 2.8rem); }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="karaoke-screen">
+      <header class="karaoke-header">
+        <div>
+          <h1 class="karaoke-title"><span>Karaoké</span>Nos deux petits soleils</h1>
+        </div>
+        <button class="karaoke-play" id="playButton" type="button">▶ Lancer la chanson</button>
+      </header>
+
+      <section class="karaoke-lyrics" aria-live="polite">
+        <div class="lyric-card">
+          <p class="lyric-line is-current" id="currentLyric">Chargement des paroles…</p>
+          <p class="lyric-line is-next" id="nextLyric"></p>
+        </div>
+      </section>
+
+      <footer class="karaoke-footer">
+        <div class="karaoke-progress" aria-hidden="true"><span id="progressBar"></span></div>
+        <p class="karaoke-status" id="statusText">Préparation du karaoké…</p>
+        <audio id="audio" preload="auto">
+          <source src="./Nos deux petits soleils.mp3" type="audio/mpeg" />
+        </audio>
+      </footer>
+    </main>
+
+    <script>
+      const lyricFileUrl = "./Nos deux petits soleils.ass";
+      const audio = document.getElementById("audio");
+      const playButton = document.getElementById("playButton");
+      const currentLyric = document.getElementById("currentLyric");
+      const nextLyric = document.getElementById("nextLyric");
+      const progressBar = document.getElementById("progressBar");
+      const statusText = document.getElementById("statusText");
+
+      let cues = [];
+      let currentCueIndex = -1;
+
+      function timeToSeconds(value) {
+        const [hours, minutes, secondsAndMs] = value.split(":");
+        const [seconds, milliseconds = "0"] = secondsAndMs.split(".");
+        return Number(hours || 0) * 3600 + Number(minutes || 0) * 60 + Number(seconds || 0) + Number(milliseconds.padEnd(3, "0")) / 1000;
+      }
+
+      function sanitizeText(text) {
+        return String(text || "")
+          .replace(/\\N/g, "\n")
+          .replace(/\\h/g, " ")
+          .replace(/\{[^}]*\}/g, "")
+          .trim();
+      }
+
+      function parseAss(text) {
+        const lines = text.split(/\r?\n/);
+        const parsed = [];
+
+        lines.forEach((line) => {
+          if (!line.startsWith("Dialogue:")) return;
+
+          const parts = line.split(",");
+          if (parts.length < 10) return;
+
+          const start = parts[1];
+          const end = parts[2];
+          const text = parts.slice(9).join(",");
+
+          parsed.push({
+            start: timeToSeconds(start),
+            end: timeToSeconds(end),
+            text: sanitizeText(text)
+          });
+        });
+
+        return parsed.filter((cue) => cue.text);
+      }
+
+      function updateLyric() {
+        const currentTime = audio.currentTime || 0;
+        let nextIndex = currentCueIndex;
+
+        while (nextIndex + 1 < cues.length && currentTime >= cues[nextIndex + 1].start) {
+          nextIndex += 1;
+        }
+
+        if (nextIndex !== currentCueIndex) {
+          currentCueIndex = nextIndex;
+          const currentCue = cues[currentCueIndex];
+          const nextCue = cues[currentCueIndex + 1];
+          currentLyric.textContent = currentCue?.text || "";
+          nextLyric.textContent = nextCue?.text || "";
+        }
+
+        const duration = audio.duration || 1;
+        progressBar.style.width = `${(currentTime / duration) * 100}%`;
+      }
+
+      async function loadLyrics() {
+        try {
+          const response = await fetch(lyricFileUrl);
+          if (!response.ok) throw new Error("Impossible de charger le fichier ASS");
+          const text = await response.text();
+          cues = parseAss(text);
+          if (cues.length) {
+            currentLyric.textContent = cues[0].text;
+            nextLyric.textContent = cues[1]?.text || "";
+            statusText.textContent = "Les paroles sont prêtes. Appuie sur jouer pour commencer.";
+          } else {
+            statusText.textContent = "Aucune parole n’a pu être lue dans le fichier ASS.";
+          }
+        } catch (error) {
+          statusText.textContent = error.message;
+        }
+      }
+
+      playButton.addEventListener("click", async () => {
+        try {
+          if (audio.paused) {
+            await audio.play();
+            playButton.textContent = "⏸ Lecture en cours";
+            statusText.textContent = "Lecture en cours…";
+          } else {
+            audio.pause();
+            playButton.textContent = "▶ Reprendre";
+            statusText.textContent = "Lecture en pause.";
+          }
+        } catch (error) {
+          statusText.textContent = "La lecture automatique a été bloquée. Clique à nouveau pour démarrer.";
+        }
+      });
+
+      audio.addEventListener("play", () => {
+        playButton.textContent = "⏸ Lecture en cours";
+      });
+
+      audio.addEventListener("pause", () => {
+        if (!audio.ended) {
+          playButton.textContent = "▶ Reprendre";
+        }
+      });
+
+      audio.addEventListener("ended", () => {
+        playButton.textContent = "▶ Relire";
+        statusText.textContent = "Fin de la chanson.";
+      });
+
+      audio.addEventListener("timeupdate", updateLyric);
+      audio.addEventListener("loadedmetadata", updateLyric);
+
+      loadLyrics();
+    </script>
+  </body>
+</html>
