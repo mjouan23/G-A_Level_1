@@ -13,24 +13,24 @@ Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
 Dialogue: 0,0:00:00.00,0:00:16,Karaoke,,0,0,0,,Il y a un an, le ciel nous a souri,
 Dialogue: 0,0:00:16,0:00:20,Karaoke,,0,0,0,,Deux petits trésors sont entrés dans nos vies.
 Dialogue: 0,0:00:20,0:00:25,Karaoke,,0,0,0,,Trois semaines d'avance, déjà pressés d'aimer,
-Dialogue: 0,0:00:25,0:00:42.34,Karaoke,,0,0,0,,Gabriel et Axel, vous aviez tout deviné.
-Dialogue: 0,0:00:42.34,0:00:52.92,Karaoke,,0,0,0,,Des biberons la nuit, des doudous au réveil,
-Dialogue: 0,0:00:52.92,0:01:03.51,Karaoke,,0,0,0,,Des montagnes de linge jusqu'au lever du soleil.
-Dialogue: 0,0:01:03.51,0:01:14.09,Karaoke,,0,0,0,,Des chaussettes envolées, des jouets dans le salon,
-Dialogue: 0,0:01:14.09,0:01:24.68,Karaoke,,0,0,0,,Et pourtant quel bonheur dans cette maison !
-Dialogue: 0,0:01:24.68,0:01:35.26,Karaoke,,0,0,0,,Vos premiers sourires faisaient tout oublier,
-Dialogue: 0,0:01:35.26,0:01:45.85,Karaoke,,0,0,0,,Les nuits trop courtes et les yeux fatigués.
-Dialogue: 0,0:01:45.85,0:01:56.43,Karaoke,,0,0,0,,Main dans la main, toujours prêts à explorer,
-Dialogue: 0,0:01:56.43,0:02:07.02,Karaoke,,0,0,0,,Vous avez transformé notre monde entier.
-Dialogue: 0,0:02:07.02,0:02:17.60,Karaoke,,0,0,0,,Gabriel et Axel,
-Dialogue: 0,0:02:17.60,0:02:28.19,Karaoke,,0,0,0,,Nos deux petits soleils.
-Dialogue: 0,0:02:28.19,0:02:38.77,Karaoke,,0,0,0,,Vous faites danser nos cœurs,
-Dialogue: 0,0:02:38.77,0:02:49.36,Karaoke,,0,0,0,,Vous colorez le bonheur.
-Dialogue: 0,0:02:49.36,0:02:59.94,Karaoke,,0,0,0,,Gabriel et Axel,
-Dialogue: 0,0:02:59.94,0:03:10.53,Karaoke,,0,0,0,,Quel merveilleux cadeau !
-Dialogue: 0,0:03:10.53,0:03:21.11,Karaoke,,0,0,0,,Une première bougie aujourd'hui,
-Dialogue: 0,0:03:21.11,0:03:31.70,Karaoke,,0,0,0,,Et déjà des milliers de souvenirs.
-Dialogue: 0,0:03:31.70,0:03:42.28,Karaoke,,0,0,0,,Quelle chance d'avoir une si belle tribu,
-Dialogue: 0,0:03:42.28,0:03:52.87,Karaoke,,0,0,0,,Toujours près de vous, quoi qu'il soit advenu.
-Dialogue: 0,0:03:52.87,0:04:03.45,Karaoke,,0,0,0,,Christophe veille sur vous avec tout son grand cœur,
-Dialogue: 0,0:04:03.45,0:04:14.04,Karaoke,,0,0,0,,Un parrain comme lui, c'est un vrai porte-bonheur.
+Dialogue: 0,0:00:25,0:00:31,Karaoke,,0,0,0,,Gabriel et Axel, vous aviez tout deviné.
+Dialogue: 0,0:00:31,0:00:34,Karaoke,,0,0,0,,Des biberons la nuit, des doudous au réveil,
+Dialogue: 0,0:00:34,0:00:37,Karaoke,,0,0,0,,Des montagnes de linge jusqu'au lever du soleil.
+Dialogue: 0,0:00:37,0:00:39,Karaoke,,0,0,0,,Des chaussettes envolées, des jouets dans le salon,
+Dialogue: 0,0:00:39,0:00:43,Karaoke,,0,0,0,,Et pourtant quel bonheur dans cette maison !
+Dialogue: 0,0:00:43,0:00:46,Karaoke,,0,0,0,,Vos premiers sourires faisaient tout oublier,
+Dialogue: 0,0:00:46,0:00:48,Karaoke,,0,0,0,,Les nuits trop courtes et les yeux fatigués.
+Dialogue: 0,0:00:48,0:00:52,Karaoke,,0,0,0,,Main dans la main, toujours prêts à explorer,
+Dialogue: 0,0:00:52,0:00:54,Karaoke,,0,0,0,,Vous avez transformé notre monde entier.
+Dialogue: 0,0:00:54,0:00:57,Karaoke,,0,0,0,,Gabriel et Axel,
+Dialogue: 0,0:00:57,0:01:00,Karaoke,,0,0,0,,Nos deux petits soleils.
+Dialogue: 0,0:01:00,0:01:02,Karaoke,,0,0,0,,Vous faites danser nos cœurs,
+Dialogue: 0,0:01:02,0:01:06,Karaoke,,0,0,0,,Vous colorez le bonheur.
+Dialogue: 0,0:01:06,0:01:08,Karaoke,,0,0,0,,Gabriel et Axel,
+Dialogue: 0,0:01:08,0:01:11,Karaoke,,0,0,0,,Quel merveilleux cadeau !
+Dialogue: 0,0:01:11,0:01:13,Karaoke,,0,0,0,,Une première bougie aujourd'hui,
+Dialogue: 0,0:01:13,0:01:18,Karaoke,,0,0,0,,Et déjà des milliers de souvenirs.
+Dialogue: 0,0:01:18,0:01:21,Karaoke,,0,0,0,,Quelle chance d'avoir une si belle tribu,
+Dialogue: 0,0:01:21,0:01:24,Karaoke,,0,0,0,,Toujours près de vous, quoi qu'il soit advenu.
+Dialogue: 0,0:01:24,0:01:27,Karaoke,,0,0,0,,Christophe veille sur vous avec tout son grand cœur,
+Dialogue: 0,0:01:27,0:01:30,Karaoke,,0,0,0,,Un parrain comme lui, c'est un vrai porte-bonheur.
