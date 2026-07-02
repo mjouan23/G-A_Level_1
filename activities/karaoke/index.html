@@ -186,6 +186,8 @@
 
       let cues = [];
       let currentCueIndex = -1;
+      let renderLoopId = null;
+      const syncOffsetSeconds = 0.06;
 
       function timeToSeconds(value) {
         const [hours, minutes, secondsAndMs] = value.split(":");
@@ -226,7 +228,7 @@
       }
 
       function updateLyric() {
-        const currentTime = audio.currentTime || 0;
+        const currentTime = Math.max(0, (audio.currentTime || 0) + syncOffsetSeconds);
         const duration = audio.duration || 1;
         progressBar.style.width = `${(currentTime / duration) * 100}%`;
 
@@ -247,6 +249,22 @@
           const nextCue = cues[currentCueIndex + 1];
           currentLyric.textContent = currentCue?.text || "";
           nextLyric.textContent = nextCue?.text || "";
+        }
+      }
+
+      function startRenderLoop() {
+        if (renderLoopId) cancelAnimationFrame(renderLoopId);
+        const tick = () => {
+          updateLyric();
+          renderLoopId = requestAnimationFrame(tick);
+        };
+        renderLoopId = requestAnimationFrame(tick);
+      }
+
+      function stopRenderLoop() {
+        if (renderLoopId) {
+          cancelAnimationFrame(renderLoopId);
+          renderLoopId = null;
         }
       }
 
@@ -274,8 +292,10 @@
             await audio.play();
             playButton.textContent = "⏸ Lecture en cours";
             statusText.textContent = "Lecture en cours…";
+            startRenderLoop();
           } else {
             audio.pause();
+            stopRenderLoop();
             playButton.textContent = "▶ Reprendre";
             statusText.textContent = "Lecture en pause.";
           }
@@ -286,21 +306,25 @@
 
       audio.addEventListener("play", () => {
         playButton.textContent = "⏸ Lecture en cours";
+        startRenderLoop();
       });
 
       audio.addEventListener("pause", () => {
+        stopRenderLoop();
         if (!audio.ended) {
           playButton.textContent = "▶ Reprendre";
         }
       });
 
       audio.addEventListener("ended", () => {
+        stopRenderLoop();
         playButton.textContent = "▶ Relire";
         statusText.textContent = "Fin de la chanson.";
       });
 
-      audio.addEventListener("timeupdate", updateLyric);
-      audio.addEventListener("loadedmetadata", updateLyric);
+      audio.addEventListener("loadedmetadata", () => {
+        updateLyric();
+      });
 
       loadLyrics();
     </script>
