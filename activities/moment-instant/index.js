@@ -13,6 +13,7 @@ const playerUrl = "https://level1.meeplix.fr/activities/moment-instant/player.ht
 const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=16&data=${encodeURIComponent(playerUrl)}`;
 const requestTimeout = 10000;
 const appliedVotesStorageKey = "momentInstantAppliedVotes";
+const voteMusicUrl = new URL("./sons/A Thousand Years.mp3", import.meta.url);
 
 const photoOwners = [
   { teamIndex: 0, teamName: "Ninou", photos: [1, 2] },
@@ -108,6 +109,7 @@ function applyContributionDelta(previous = {}, next = {}, adjustTeamScore) {
 export function render({ container, teams = [], adjustTeamScore = () => {} }) {
   let pollTimer = null;
   let consecutiveApiErrors = 0;
+  let voteMusicStarted = false;
 
   container.innerHTML = `
     <section class="moment-instant-module" aria-label="Vote Moment Instant">
@@ -241,6 +243,13 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
     if (!isReady) {
       renderWaiting(state);
       return;
+    }
+
+    if (!voteMusicStarted) {
+      voteMusicStarted = true;
+      const voteMusic = new Audio(voteMusicUrl);
+      voteMusic.volume = 0.6;
+      voteMusic.play().catch(() => {});
     }
 
     renderVotes(state);
