@@ -165,6 +165,8 @@ export function render({
   updateTurnDisplay();
 
   return () => {
+    memoryMusic.pause();
+    memoryMusic.currentTime = 0;
     setActiveTeam(null);
   };
 }
