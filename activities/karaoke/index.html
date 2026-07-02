@@ -227,22 +227,27 @@
 
       function updateLyric() {
         const currentTime = audio.currentTime || 0;
-        let nextIndex = currentCueIndex;
+        const duration = audio.duration || 1;
+        progressBar.style.width = `${(currentTime / duration) * 100}%`;
 
-        while (nextIndex + 1 < cues.length && currentTime >= cues[nextIndex + 1].start) {
-          nextIndex += 1;
+        if (!cues.length) return;
+
+        let activeCueIndex = 0;
+        for (let index = cues.length - 1; index >= 0; index -= 1) {
+          const cue = cues[index];
+          if (currentTime >= cue.start && currentTime < cue.end) {
+            activeCueIndex = index;
+            break;
+          }
         }
 
-        if (nextIndex !== currentCueIndex) {
-          currentCueIndex = nextIndex;
+        if (activeCueIndex !== currentCueIndex) {
+          currentCueIndex = activeCueIndex;
           const currentCue = cues[currentCueIndex];
           const nextCue = cues[currentCueIndex + 1];
           currentLyric.textContent = currentCue?.text || "";
           nextLyric.textContent = nextCue?.text || "";
         }
-
-        const duration = audio.duration || 1;
-        progressBar.style.width = `${(currentTime / duration) * 100}%`;
       }
 
       async function loadLyrics() {
