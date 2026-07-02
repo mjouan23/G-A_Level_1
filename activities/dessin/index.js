@@ -3,6 +3,13 @@ const DRAW_BOARD_URL = new URL("./draw.html", import.meta.url);
 const DRAW_DURATION_SECONDS = 120;
 const POINTS_PER_DRAWING = 5;
 const POINTS_PER_GUESS = 2;
+const DRAW_MUSIC_TRACKS = [
+  new URL("./sons/Kevin Macleod Carefree.mp3", import.meta.url),
+  new URL("./sons/Kevin MacLeod Merry Go.mp3", import.meta.url),
+  new URL("./sons/Kevin MacLeod Monkeys Spinning Monkeys.mp3", import.meta.url),
+  new URL("./sons/Kevin MacLeod Sneaky Snitch.mp3", import.meta.url)
+];
+const DRAW_GONG_URL = new URL("./sons/gong.mp3", import.meta.url);
 
 export const activity = {
   id: "dessin",
@@ -62,6 +69,7 @@ export function render({
   let controls = null;
   let countdownBadge = null;
   let startButton = null;
+  let currentMusic = null;
 
   container.innerHTML = `
     <section class="drawing-host" aria-label="Visualisation du dessin">
@@ -195,6 +203,30 @@ export function render({
     lastPoint = nextPoint;
   }
 
+  function stopCurrentMusic() {
+    if (currentMusic) {
+      currentMusic.pause();
+      currentMusic.currentTime = 0;
+      currentMusic = null;
+    }
+  }
+
+  function playRandomMusic() {
+    stopCurrentMusic();
+    const selectedTrack = DRAW_MUSIC_TRACKS[Math.floor(Math.random() * DRAW_MUSIC_TRACKS.length)];
+    currentMusic = new Audio(selectedTrack);
+    currentMusic.loop = true;
+    currentMusic.volume = 0.45;
+    currentMusic.play().catch(() => {});
+  }
+
+  function playGong() {
+    stopCurrentMusic();
+    const gongAudio = new Audio(DRAW_GONG_URL);
+    gongAudio.volume = 0.8;
+    gongAudio.play().catch(() => {});
+  }
+
   function handleMessage(event) {
     const message = event.data;
     if (!message || typeof message !== "object") return;
@@ -302,6 +334,7 @@ export function render({
     updateCountdown();
     lockDrawing({ showTimeout: true });
     clearDrawing({ hideTimeout: false });
+    playGong();
     remaining = DRAW_DURATION_SECONDS;
     const nextTeamToPlay = nextTeam();
     status.textContent = `Temps écoulé ! Prochaine équipe : ${nextTeamToPlay.name}.`;
@@ -331,6 +364,7 @@ export function render({
   function handleStartButtonClick() {
     if (timerRunning) return;
 
+    playRandomMusic();
     startCountdown();
   }
 
@@ -350,6 +384,7 @@ export function render({
   return () => {
     window.cancelAnimationFrame(resizeFrame);
     stopTimer();
+    stopCurrentMusic();
     channel?.removeEventListener("message", handleMessage);
     channel?.close();
     window.removeEventListener("resize", handleResize);
