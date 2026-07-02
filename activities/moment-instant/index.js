@@ -110,6 +110,7 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
   let pollTimer = null;
   let consecutiveApiErrors = 0;
   let voteMusicStarted = false;
+  let voteMusic = null;
 
   container.innerHTML = `
     <section class="moment-instant-module" aria-label="Vote Moment Instant">
@@ -247,7 +248,8 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
 
     if (!voteMusicStarted) {
       voteMusicStarted = true;
-      const voteMusic = new Audio(voteMusicUrl);
+      voteMusic = new Audio(voteMusicUrl);
+      voteMusic.loop = true;
       voteMusic.volume = 0.6;
       voteMusic.play().catch(() => {});
     }
@@ -277,6 +279,10 @@ export function render({ container, teams = [], adjustTeamScore = () => {} }) {
 
   return () => {
     window.clearInterval(pollTimer);
+    if (voteMusic) {
+      voteMusic.pause();
+      voteMusic.currentTime = 0;
+    }
     qrToggleButton.removeEventListener("click", toggleQrPopover);
   };
 }
